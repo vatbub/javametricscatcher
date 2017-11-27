@@ -31,6 +31,10 @@ public abstract class KryoCommon {
     }
 
     public static void registerClasses(Kryo kryo){
+        kryo.register(CustomHistogram.class, new JavaSerializer());
+        kryo.register(CustomTimer.class, new JavaSerializer());
+        kryo.register(ExceptionMessage.class, new JavaSerializer());
+        kryo.register(MetricHistory.class, new JavaSerializer());
         kryo.register(MetricsUpdateRequest.class, new JavaSerializer());
     }
 }

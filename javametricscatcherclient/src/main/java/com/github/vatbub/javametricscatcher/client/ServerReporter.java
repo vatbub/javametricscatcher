@@ -21,10 +21,12 @@ package com.github.vatbub.javametricscatcher.client;
  */
 
 
-
 import com.codahale.metrics.*;
-import com.codahale.metrics.Timer;
 import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
+import com.github.vatbub.common.core.logging.FOKLogger;
+import com.github.vatbub.javametricscatcher.common.ExceptionMessage;
 import com.github.vatbub.javametricscatcher.common.KryoCommon;
 import com.github.vatbub.javametricscatcher.common.MetricsUpdateRequest;
 
@@ -32,9 +34,11 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.Map;
+import java.util.SortedMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 /**
  * A reporter which outputs measurements to a {@link PrintStream}, like {@code System.out}.
@@ -212,51 +216,68 @@ public class ServerReporter extends ScheduledReporter {
                        SortedMap<String, Histogram> histograms,
                        SortedMap<String, Meter> meters,
                        SortedMap<String, Timer> timers) {
-        if (!gauges.isEmpty()) {
-            for (Map.Entry<String, Gauge> entry : gauges.entrySet()) {
-                client.sendMetric(entry.getKey(), entry.getValue());
+        try {
+            if (!gauges.isEmpty()) {
+                for (Map.Entry<String, Gauge> entry : gauges.entrySet()) {
+                    client.sendMetric(entry.getKey(), entry.getValue());
+                }
             }
-        }
 
-        if (!counters.isEmpty()) {
-            for (Map.Entry<String, Counter> entry : counters.entrySet()) {
-                client.sendMetric(entry.getKey(), entry.getValue());
+            if (!counters.isEmpty()) {
+                for (Map.Entry<String, Counter> entry : counters.entrySet()) {
+                    client.sendMetric(entry.getKey(), entry.getValue());
+                }
             }
-        }
 
-        if (!histograms.isEmpty()) {
-            for (Map.Entry<String, Histogram> entry : histograms.entrySet()) {
-                client.sendMetric(entry.getKey(), entry.getValue());
+            if (!histograms.isEmpty()) {
+                for (Map.Entry<String, Histogram> entry : histograms.entrySet()) {
+                    client.sendMetric(entry.getKey(), entry.getValue());
+                }
             }
-        }
 
-        if (!meters.isEmpty()) {
-            for (Map.Entry<String, Meter> entry : meters.entrySet()) {
-                client.sendMetric(entry.getKey(), entry.getValue());
+            if (!meters.isEmpty()) {
+                for (Map.Entry<String, Meter> entry : meters.entrySet()) {
+                    client.sendMetric(entry.getKey(), entry.getValue());
+                }
             }
-        }
 
-        if (!timers.isEmpty()) {
-            for (Map.Entry<String, Timer> entry : timers.entrySet()) {
-                client.sendMetric(entry.getKey(), entry.getValue());
+            if (!timers.isEmpty()) {
+                for (Map.Entry<String, Timer> entry : timers.entrySet()) {
+                    client.sendMetric(entry.getKey(), entry.getValue());
+                }
             }
+        } catch (IOException e) {
+            FOKLogger.log(ServerReporter.class.getName(), Level.SEVERE, "IOException occurred while trying to send the metrics to the server. Submission will be retried when rescheduled.");
         }
     }
 
     private class KryoClient {
         private Client client;
         private boolean useUDP;
+        private int timeout;
+        private InetAddress host;
+        private int tcpPort;
+        private int udpPort;
 
         private KryoClient(int timeout, InetAddress host, int tcpPort, int udpPort, boolean useUDP) throws IOException {
-            this(new Client(), useUDP);
+            this.client = new Client();
+            setUseUDP(useUDP);
+            setTimeout(timeout);
+            setHost(host);
+            setTcpPort(tcpPort);
+            setUdpPort(udpPort);
+
             getClient().start();
             KryoCommon.registerClasses(getClient().getKryo());
-            getClient().connect(timeout, host, tcpPort, udpPort);
-        }
 
-        private KryoClient(Client client, boolean useUDP) {
-            this.client = client;
-            setUseUDP(useUDP);
+            getClient().addListener(new Listener(){
+                @Override
+                public void received(Connection connection, Object object) {
+                    if (object instanceof ExceptionMessage){
+                        FOKLogger.severe(KryoClient.class.getName(), "Server sent an exception:\n" + object.toString() + "\nPlease see the server log for a detailed stacktrace.");
+                    }
+                }
+            });
         }
 
         public Client getClient() {
@@ -271,12 +292,52 @@ public class ServerReporter extends ScheduledReporter {
             this.useUDP = useUDP;
         }
 
-        public void sendMetric(String metricName, Metric metric) {
+        private void reconnect() throws IOException {
+            getClient().connect(getTimeout(), getHost(), getTcpPort(), getUdpPort());
+        }
+
+        public void sendMetric(String metricName, Metric metric) throws IOException {
+            if (!getClient().isConnected()) {
+                reconnect();
+            }
+
             if (isUseUDP()) {
                 client.sendUDP(new MetricsUpdateRequest(metricName, metric));
             } else {
                 client.sendTCP(new MetricsUpdateRequest(metricName, metric));
             }
+        }
+
+        public int getTcpPort() {
+            return tcpPort;
+        }
+
+        public InetAddress getHost() {
+            return host;
+        }
+
+        public int getTimeout() {
+            return timeout;
+        }
+
+        public int getUdpPort() {
+            return udpPort;
+        }
+
+        public void setTimeout(int timeout) {
+            this.timeout = timeout;
+        }
+
+        public void setHost(InetAddress host) {
+            this.host = host;
+        }
+
+        public void setTcpPort(int tcpPort) {
+            this.tcpPort = tcpPort;
+        }
+
+        public void setUdpPort(int udpPort) {
+            this.udpPort = udpPort;
         }
     }
 }
