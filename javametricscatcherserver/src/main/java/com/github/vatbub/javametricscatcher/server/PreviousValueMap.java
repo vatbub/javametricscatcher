@@ -23,6 +23,8 @@ package com.github.vatbub.javametricscatcher.server;
 
 import com.codahale.metrics.Counter;
 import com.esotericsoftware.kryonet.Connection;
+import com.github.vatbub.javametricscatcher.common.CustomHistogram;
+import com.github.vatbub.javametricscatcher.common.CustomTimer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,15 +45,19 @@ public class PreviousValueMap extends HashMap<Connection, PreviousValueMap.Value
         super(m);
     }
 
-    public static class ValueCollection{
+    public static class ValueCollection {
         private Map<String, Counter> counterMap;
+        private Map<String, CustomHistogram> histogramMap;
+        private Map<String, CustomTimer> timerMap;
 
-        public ValueCollection(){
-            this(new HashMap<>());
+        public ValueCollection() {
+            this(new HashMap<>(), new HashMap<>(), new HashMap<>());
         }
 
-        public ValueCollection(Map<String, Counter> counterMap){
+        public ValueCollection(Map<String, Counter> counterMap, Map<String, CustomHistogram> histogramMap, Map<String, CustomTimer> timerMap) {
             setCounter(counterMap);
+            setHistogramMap(histogramMap);
+            setTimerMap(timerMap);
         }
 
         public Map<String, Counter> getCounterMap() {
@@ -60,6 +66,22 @@ public class PreviousValueMap extends HashMap<Connection, PreviousValueMap.Value
 
         public void setCounter(Map<String, Counter> counterMap) {
             this.counterMap = counterMap;
+        }
+
+        public Map<String, CustomHistogram> getHistogramMap() {
+            return histogramMap;
+        }
+
+        public void setHistogramMap(Map<String, CustomHistogram> histogramMap) {
+            this.histogramMap = histogramMap;
+        }
+
+        public Map<String, CustomTimer> getTimerMap() {
+            return timerMap;
+        }
+
+        public void setTimerMap(Map<String, CustomTimer> timerMap) {
+            this.timerMap = timerMap;
         }
     }
 }
