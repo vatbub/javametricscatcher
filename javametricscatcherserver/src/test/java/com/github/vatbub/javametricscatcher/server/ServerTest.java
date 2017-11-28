@@ -23,11 +23,14 @@ package com.github.vatbub.javametricscatcher.server;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.FrameworkMessage;
 import com.esotericsoftware.kryonet.Listener;
+import com.github.vatbub.common.core.logging.FOKLogger;
 import com.github.vatbub.javametricscatcher.common.ExceptionMessage;
 import com.github.vatbub.javametricscatcher.common.KryoCommon;
 import com.github.vatbub.javametricscatcher.common.MetricsUpdateRequest;
 import com.github.vatbub.javametricscatcher.common.MetricsUpdateResponse;
+import com.github.vatbub.javametricscatcher.common.custommetrics.CustomCounter;
 import com.github.vatbub.javametricscatcher.common.custommetrics.IntegerGauge;
 import com.github.vatbub.javametricscatcher.common.custommetrics.LongGauge;
 import org.junit.*;
@@ -72,7 +75,6 @@ public class ServerTest {
         }
 
         kryoClient.stop();
-        System.out.println("Number of thrown exceptions: " + thrownExceptions.size());
         if (thrownExceptions.size() > 0) {
             throw thrownExceptions.get(0);
         }
@@ -82,7 +84,7 @@ public class ServerTest {
     @Test
     public void sendIntegerGaugeTest() throws InterruptedException {
         int gaugeValue = 100;
-        String metricName = "testMetric";
+        String metricName = "testMetric.integerGauge";
         addGaugeResponseListener(metricName);
 
         IntegerGauge gauge = new IntegerGauge();
@@ -93,7 +95,7 @@ public class ServerTest {
     @Test
     public void sendLongGaugeTest() throws InterruptedException {
         long gaugeValue = 100;
-        String metricName = "testMetric";
+        String metricName = "testMetric.longGauge";
         addGaugeResponseListener(metricName);
 
         LongGauge gauge = new LongGauge();
@@ -102,8 +104,48 @@ public class ServerTest {
     }
 
     @Test
-    public void sendIllegalObjectTest(){
-        kryoClient.addListener(new Listener(){
+    public void sendCounterTest() throws InterruptedException {
+        long targetValue = 10;
+        CustomCounter counter = new CustomCounter();
+        final boolean[] waitForNextResponse = {false};
+        String metricName = "testMetric.counter";
+        kryoClient.addListener(new Listener() {
+            @Override
+            public void received(Connection connection, Object object) {
+                executeReceivedHandler(() -> {
+                    try {
+                        if (object instanceof FrameworkMessage.KeepAlive)
+                            return;
+
+                        FOKLogger.info(ServerTest.class.getName(), "Received a response of type " + object.getClass().getName() + ", performing assertions...");
+                        Assert.assertTrue(object instanceof MetricsUpdateResponse);
+                        Assert.assertEquals(1, server.getRegistry().getCounters().size());
+                        Assert.assertTrue(server.getRegistry().getCounters().containsKey(metricName));
+                        Assert.assertEquals(counter.getCount(), server.getRegistry().getCounters().get(metricName).getCount());
+                        waitForNextResponse[0] = false;
+                    } catch (Throwable t) {
+                        waitForNextResponse[0] = false;
+                        throw t;
+                    }
+                }, counter.getCount() == targetValue);
+            }
+        });
+
+        for (int i = 0; i <= targetValue; i++) {
+            FOKLogger.info(ServerTest.class.getName(), "Waiting for the previous request to pass...");
+            while (waitForNextResponse[0]) {
+                Thread.sleep(50);
+            }
+            waitForNextResponse[0] = true;
+            counter.inc();
+            FOKLogger.info(ServerTest.class.getName(), "Sending counter value " + counter.getCount());
+            kryoClient.sendTCP(new MetricsUpdateRequest(metricName, counter.getMetricType(), counter.getSerializableData(), counter.getAdditionalMetadata()));
+        }
+    }
+
+    @Test
+    public void sendIllegalObjectTest() {
+        kryoClient.addListener(new Listener() {
             @Override
             public void received(Connection connection, Object object) {
                 executeReceivedHandler(() -> {
@@ -115,25 +157,30 @@ public class ServerTest {
         kryoClient.sendTCP("Hello");
     }
 
-    private void addGaugeResponseListener(String metricName){
+    private void addGaugeResponseListener(String metricName) {
         kryoClient.addListener(new Listener() {
             @Override
             public void received(Connection connection, Object object) {
                 executeReceivedHandler(() -> {
                     Assert.assertTrue(object instanceof MetricsUpdateResponse);
-                    Assert.assertEquals(1,server.getRegistry().getHistograms().size());
+                    Assert.assertEquals(1, server.getRegistry().getHistograms().size());
                     Assert.assertTrue(server.getRegistry().getHistograms().containsKey(metricName));
                 });
             }
         });
     }
 
-    public void executeReceivedHandler(Runnable handler){
+    public void executeReceivedHandler(Runnable handler) {
+        executeReceivedHandler(handler, true);
+    }
+
+    public void executeReceivedHandler(Runnable handler, boolean setReceivedResponse) {
         try {
             handler.run();
+            receivedResponse = setReceivedResponse;
         } catch (Throwable e) {
+            e.printStackTrace();
             thrownExceptions.add(e);
-        } finally {
             receivedResponse = true;
         }
     }

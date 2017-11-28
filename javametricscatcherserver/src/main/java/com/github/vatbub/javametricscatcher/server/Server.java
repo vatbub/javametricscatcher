@@ -134,17 +134,15 @@ public class Server {
                                 Counter localCounter = getRegistry().counter(request.getMetricName());
                                 Counter previousRemoteCounter = previousValueMap.get(connection).getCounterMap().get(request.getMetricName());
 
-                                long diff = previousRemoteCounter.getCount() - (long) request.getMetricData();
+                                long diff = (long) request.getMetricData() - previousRemoteCounter.getCount();
                                 localCounter.inc(diff);
                                 // set the previous value to the sent value
                                 previousRemoteCounter.inc(diff);
-                                assert previousRemoteCounter.getCount() == (long) request.getMetricData();
-
                                 break;
                         }
                         connection.sendTCP(new MetricsUpdateResponse());
                     } else {
-                        throw new IllegalRequestException("Illegal object received :" + object.getClass().getName());
+                        throw new IllegalRequestException("Illegal object received: " + object.getClass().getName());
                     }
                 } catch (Exception e) {
                     FOKLogger.log(Server.class.getName(), Level.SEVERE, FOKLogger.DEFAULT_ERROR_TEXT, e);
