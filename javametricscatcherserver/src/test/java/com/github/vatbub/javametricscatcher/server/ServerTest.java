@@ -30,10 +30,7 @@ import com.github.vatbub.javametricscatcher.common.ExceptionMessage;
 import com.github.vatbub.javametricscatcher.common.KryoCommon;
 import com.github.vatbub.javametricscatcher.common.MetricsUpdateRequest;
 import com.github.vatbub.javametricscatcher.common.MetricsUpdateResponse;
-import com.github.vatbub.javametricscatcher.common.custommetrics.CustomCounter;
-import com.github.vatbub.javametricscatcher.common.custommetrics.CustomTimer;
-import com.github.vatbub.javametricscatcher.common.custommetrics.IntegerGauge;
-import com.github.vatbub.javametricscatcher.common.custommetrics.LongGauge;
+import com.github.vatbub.javametricscatcher.common.custommetrics.*;
 import org.junit.*;
 
 import java.io.IOException;
@@ -87,7 +84,7 @@ public class ServerTest {
     public void sendIntegerGaugeTest() throws InterruptedException {
         int gaugeValue = 100;
         String metricName = "testMetric.integerGauge";
-        addGaugeResponseListener(metricName);
+        addGaugeAndHistogramResponseListener(metricName);
 
         IntegerGauge gauge = new IntegerGauge();
         gauge.setValue(gaugeValue);
@@ -98,7 +95,7 @@ public class ServerTest {
     public void sendLongGaugeTest() throws InterruptedException {
         long gaugeValue = 100;
         String metricName = "testMetric.longGauge";
-        addGaugeResponseListener(metricName);
+        addGaugeAndHistogramResponseListener(metricName);
 
         LongGauge gauge = new LongGauge();
         gauge.setValue(gaugeValue);
@@ -123,6 +120,16 @@ public class ServerTest {
         CustomTimer timer = new CustomTimer();
         timer.update(100, TimeUnit.SECONDS);
         kryoClient.sendTCP(new MetricsUpdateRequest(metricName, timer.getMetricType(), timer.getSerializableData(), timer.getAdditionalMetadata()));
+    }
+
+    @Test
+    public void sendHistogramTest() throws InterruptedException {
+        String metricName = "testMetric.histogram";
+        addGaugeAndHistogramResponseListener(metricName);
+
+        CustomHistogram histogram = new CustomHistogram();
+        histogram.update(100);
+        kryoClient.sendTCP(new MetricsUpdateRequest(metricName, histogram.getMetricType(), histogram.getSerializableData(), histogram.getAdditionalMetadata()));
     }
 
     @Test
@@ -179,7 +186,7 @@ public class ServerTest {
         kryoClient.sendTCP("Hello");
     }
 
-    private void addGaugeResponseListener(String metricName) {
+    private void addGaugeAndHistogramResponseListener(String metricName) {
         kryoClient.addListener(new Listener() {
             @Override
             public void received(Connection connection, Object object) {
