@@ -31,6 +31,7 @@ import com.github.vatbub.javametricscatcher.common.KryoCommon;
 import com.github.vatbub.javametricscatcher.common.MetricsUpdateRequest;
 import com.github.vatbub.javametricscatcher.common.MetricsUpdateResponse;
 import com.github.vatbub.javametricscatcher.common.custommetrics.CustomCounter;
+import com.github.vatbub.javametricscatcher.common.custommetrics.CustomTimer;
 import com.github.vatbub.javametricscatcher.common.custommetrics.IntegerGauge;
 import com.github.vatbub.javametricscatcher.common.custommetrics.LongGauge;
 import org.junit.*;
@@ -38,6 +39,7 @@ import org.junit.*;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class ServerTest {
     private static Server server;
@@ -104,6 +106,26 @@ public class ServerTest {
     }
 
     @Test
+    public void sendTimerTest() throws InterruptedException {
+        String metricName = "testMetric.timer";
+        kryoClient.addListener(new Listener() {
+            @Override
+            public void received(Connection connection, Object object) {
+                executeReceivedHandler(() -> {
+                    Assert.assertTrue(object instanceof MetricsUpdateResponse);
+                    Assert.assertEquals(1, server.getRegistry().getTimers().size());
+                    Assert.assertTrue(server.getRegistry().getTimers().containsKey(metricName));
+                    Assert.assertEquals(1, server.getRegistry().getTimers().get(metricName).getCount());
+                });
+            }
+        });
+
+        CustomTimer timer = new CustomTimer();
+        timer.update(100, TimeUnit.SECONDS);
+        kryoClient.sendTCP(new MetricsUpdateRequest(metricName, timer.getMetricType(), timer.getSerializableData(), timer.getAdditionalMetadata()));
+    }
+
+    @Test
     public void sendCounterTest() throws InterruptedException {
         long targetValue = 10;
         CustomCounter counter = new CustomCounter();
@@ -165,6 +187,7 @@ public class ServerTest {
                     Assert.assertTrue(object instanceof MetricsUpdateResponse);
                     Assert.assertEquals(1, server.getRegistry().getHistograms().size());
                     Assert.assertTrue(server.getRegistry().getHistograms().containsKey(metricName));
+                    Assert.assertEquals(1, server.getRegistry().getHistograms().get(metricName).getCount());
                 });
             }
         });
