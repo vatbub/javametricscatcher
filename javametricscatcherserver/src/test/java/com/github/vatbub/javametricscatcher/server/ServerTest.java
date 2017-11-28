@@ -21,20 +21,26 @@ package com.github.vatbub.javametricscatcher.server;
  */
 
 
-import com.codahale.metrics.Gauge;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.github.vatbub.javametricscatcher.common.KryoCommon;
+import com.github.vatbub.javametricscatcher.common.MetricsUpdateRequest;
+import com.github.vatbub.javametricscatcher.common.MetricsUpdateResponse;
+import com.github.vatbub.javametricscatcher.common.custommetrics.IntegerGauge;
 import org.junit.*;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ServerTest {
     private static Server server;
     private static final int tcpPort = 1020;
     private static final int udpPort = 1021;
     private Client kryoClient;
+    private boolean receivedResponse;
+    private List<Throwable> thrownExceptions;
 
     @BeforeClass
     public static void startServer() throws IOException {
@@ -52,22 +58,44 @@ public class ServerTest {
         kryoClient.start();
         KryoCommon.registerClasses(kryoClient.getKryo());
         kryoClient.connect(5000, "localhost", tcpPort, udpPort);
+        receivedResponse = false;
+        thrownExceptions = new LinkedList<>();
     }
 
     @After
-    public void disconnectClient() throws InterruptedException {
+    public void disconnectClient() throws Throwable {
+        while (!receivedResponse) {
+            Thread.sleep(50);
+        }
+
         kryoClient.stop();
+        System.out.println("Number of thrown exceptions: " + thrownExceptions.size());
+        if (thrownExceptions.size() > 0) {
+            throw thrownExceptions.get(0);
+        }
         Thread.sleep(2000);
     }
 
     @Test
-    public void sendMeterTest() {
+    public void sendIntegerGaugeTest() throws InterruptedException {
         kryoClient.addListener(new Listener() {
             @Override
             public void received(Connection connection, Object object) {
-                Assert.fail();
+                executeReceivedHandler(() -> Assert.assertTrue(object instanceof MetricsUpdateResponse));
             }
         });
-        kryoClient.sendTCP((Gauge<Integer>) () -> 0);
+        IntegerGauge gauge = new IntegerGauge();
+        gauge.setValue(100);
+        kryoClient.sendTCP(new MetricsUpdateRequest("testMetric", gauge.getMetricType(), gauge.getSerializableData(), gauge.getAdditionalMetadata()));
+    }
+
+    public void executeReceivedHandler(Runnable handler){
+        try {
+            handler.run();
+        } catch (Throwable e) {
+            thrownExceptions.add(e);
+        } finally {
+            receivedResponse = true;
+        }
     }
 }

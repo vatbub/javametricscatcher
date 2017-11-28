@@ -1,4 +1,4 @@
-package com.github.vatbub.javametricscatcher.common;
+package com.github.vatbub.javametricscatcher.common.custommetrics;
 
 /*-
  * #%L
@@ -25,14 +25,19 @@ import com.codahale.metrics.Clock;
 import com.codahale.metrics.ExponentiallyDecayingReservoir;
 import com.codahale.metrics.Reservoir;
 import com.codahale.metrics.Timer;
+import com.github.vatbub.javametricscatcher.common.MetricHistory;
+import com.github.vatbub.javametricscatcher.common.SerializableMetric;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-public class CustomTimer extends Timer implements MetricHistory<CustomTimer.TimerEntry> {
-    private List<TimerEntry> updateHistory;
+public class CustomTimer extends Timer implements MetricHistory<CustomTimer.TimerEntry>, SerializableMetric<LinkedList<CustomTimer.TimerEntry>> {
+    public static final String TIMER_RESERVOIR_TYPE_PARAM_KEY = "reservoirType";
+    private LinkedList<TimerEntry> updateHistory;
     private Clock clock;
     private Reservoir reservoir;
 
@@ -94,7 +99,17 @@ public class CustomTimer extends Timer implements MetricHistory<CustomTimer.Time
         return reservoir;
     }
 
-    public static class TimerEntry {
+    @Override
+    public LinkedList<TimerEntry> getSerializableData() {
+        return updateHistory;
+    }
+
+    @Override
+    public MetricType getMetricType() {
+        return MetricType.TIMER;
+    }
+
+    public static class TimerEntry implements Serializable{
         private TimeUnit timeUnit;
         private long duration;
 
@@ -139,5 +154,12 @@ public class CustomTimer extends Timer implements MetricHistory<CustomTimer.Time
             TimerEntry that = (TimerEntry) obj;
             return getTimeUnit().toNanos(getDuration()) == that.getTimeUnit().toNanos(that.getDuration());
         }
+    }
+
+    @Override
+    public HashMap<String, String> getAdditionalMetadata() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put(TIMER_RESERVOIR_TYPE_PARAM_KEY, getReservoir().getClass().getName());
+        return params;
     }
 }

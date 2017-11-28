@@ -23,8 +23,8 @@ package com.github.vatbub.javametricscatcher.server;
 
 import com.codahale.metrics.Counter;
 import com.esotericsoftware.kryonet.Connection;
-import com.github.vatbub.javametricscatcher.common.CustomHistogram;
-import com.github.vatbub.javametricscatcher.common.CustomTimer;
+import com.github.vatbub.javametricscatcher.common.custommetrics.CustomHistogram;
+import com.github.vatbub.javametricscatcher.common.custommetrics.CustomTimer;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -29,6 +29,7 @@ import com.github.vatbub.common.core.logging.FOKLogger;
 import com.github.vatbub.javametricscatcher.common.ExceptionMessage;
 import com.github.vatbub.javametricscatcher.common.KryoCommon;
 import com.github.vatbub.javametricscatcher.common.MetricsUpdateRequest;
+import com.github.vatbub.javametricscatcher.common.SerializableMetric;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -219,31 +220,31 @@ public class ServerReporter extends ScheduledReporter {
         try {
             if (!gauges.isEmpty()) {
                 for (Map.Entry<String, Gauge> entry : gauges.entrySet()) {
-                    client.sendMetric(entry.getKey(), entry.getValue());
+                    client.sendMetric(entry.getKey(), (SerializableMetric) entry.getValue());
                 }
             }
 
             if (!counters.isEmpty()) {
                 for (Map.Entry<String, Counter> entry : counters.entrySet()) {
-                    client.sendMetric(entry.getKey(), entry.getValue());
+                    client.sendMetric(entry.getKey(), (SerializableMetric) entry.getValue());
                 }
             }
 
             if (!histograms.isEmpty()) {
                 for (Map.Entry<String, Histogram> entry : histograms.entrySet()) {
-                    client.sendMetric(entry.getKey(), entry.getValue());
+                    client.sendMetric(entry.getKey(), (SerializableMetric) entry.getValue());
                 }
             }
 
             if (!meters.isEmpty()) {
                 for (Map.Entry<String, Meter> entry : meters.entrySet()) {
-                    client.sendMetric(entry.getKey(), entry.getValue());
+                    client.sendMetric(entry.getKey(), (SerializableMetric) entry.getValue());
                 }
             }
 
             if (!timers.isEmpty()) {
                 for (Map.Entry<String, Timer> entry : timers.entrySet()) {
-                    client.sendMetric(entry.getKey(), entry.getValue());
+                    client.sendMetric(entry.getKey(), (SerializableMetric) entry.getValue());
                 }
             }
         } catch (IOException e) {
@@ -270,10 +271,10 @@ public class ServerReporter extends ScheduledReporter {
             getClient().start();
             KryoCommon.registerClasses(getClient().getKryo());
 
-            getClient().addListener(new Listener(){
+            getClient().addListener(new Listener() {
                 @Override
                 public void received(Connection connection, Object object) {
-                    if (object instanceof ExceptionMessage){
+                    if (object instanceof ExceptionMessage) {
                         FOKLogger.severe(KryoClient.class.getName(), "Server sent an exception:\n" + object.toString() + "\nPlease see the server log for a detailed stacktrace.");
                     }
                 }
@@ -296,15 +297,16 @@ public class ServerReporter extends ScheduledReporter {
             getClient().connect(getTimeout(), getHost(), getTcpPort(), getUdpPort());
         }
 
-        public void sendMetric(String metricName, Metric metric) throws IOException {
+        @SuppressWarnings("unchecked")
+        public void sendMetric(String metricName, SerializableMetric metric) throws IOException {
             if (!getClient().isConnected()) {
                 reconnect();
             }
 
             if (isUseUDP()) {
-                client.sendUDP(new MetricsUpdateRequest(metricName, metric));
+                client.sendUDP(new MetricsUpdateRequest(metricName, metric.getMetricType(), metric.getSerializableData(), metric.getAdditionalMetadata()));
             } else {
-                client.sendTCP(new MetricsUpdateRequest(metricName, metric));
+                client.sendTCP(new MetricsUpdateRequest(metricName, metric.getMetricType(), metric.getSerializableData(), metric.getAdditionalMetadata()));
             }
         }
 

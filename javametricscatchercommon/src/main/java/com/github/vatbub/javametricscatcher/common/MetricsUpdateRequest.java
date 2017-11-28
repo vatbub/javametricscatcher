@@ -21,19 +21,26 @@ package com.github.vatbub.javametricscatcher.common;
  */
 
 
-import com.codahale.metrics.Metric;
+import com.github.vatbub.javametricscatcher.common.custommetrics.MetricType;
 
-public class MetricsUpdateRequest {
+import java.io.Serializable;
+import java.util.HashMap;
+
+public class MetricsUpdateRequest implements Serializable{
     private String metricName;
-    private Metric metric;
+    private MetricType metricType;
+    private Serializable metricData;
+    private HashMap<String, String> metricParameters;
 
-    public MetricsUpdateRequest(){
-        this(null, null);
+    public MetricsUpdateRequest() {
+        this(null, null, null, null);
     }
 
-    public MetricsUpdateRequest(String metricName, Metric metric){
+    public MetricsUpdateRequest(String metricName, MetricType metricType, Serializable metricData, HashMap<String, String> metricParameters) {
         setMetricName(metricName);
-        setMetric(metric);
+        setMetricType(metricType);
+        setMetricData(metricData);
+        setMetricParameters(metricParameters);
     }
 
     public String getMetricName() {
@@ -44,11 +51,27 @@ public class MetricsUpdateRequest {
         this.metricName = metricName;
     }
 
-    public Metric getMetric() {
-        return metric;
+    public MetricType getMetricType() {
+        return metricType;
     }
 
-    public void setMetric(Metric metric) {
-        this.metric = metric;
+    public void setMetricType(MetricType metricType) {
+        this.metricType = metricType;
+    }
+
+    public Serializable getMetricData() {
+        return metricData;
+    }
+
+    public void setMetricData(Serializable metricData) {
+        this.metricData = metricData;
+    }
+
+    public HashMap<String, String> getMetricParameters() {
+        return metricParameters;
+    }
+
+    public void setMetricParameters(HashMap<String, String> metricParameters) {
+        this.metricParameters = metricParameters;
     }
 }

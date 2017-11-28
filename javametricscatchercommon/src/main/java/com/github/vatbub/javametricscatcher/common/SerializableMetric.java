@@ -21,8 +21,15 @@ package com.github.vatbub.javametricscatcher.common;
  */
 
 
+import com.github.vatbub.javametricscatcher.common.custommetrics.MetricType;
+
 import java.io.Serializable;
+import java.util.HashMap;
 
-public interface SerializableMetric extends Serializable {
+public interface SerializableMetric<T extends Serializable> {
+    T getSerializableData();
 
+    MetricType getMetricType();
+
+    HashMap<String, String> getAdditionalMetadata();
 }

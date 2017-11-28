@@ -1,4 +1,4 @@
-package com.github.vatbub.javametricscatcher.common;
+package com.github.vatbub.javametricscatcher.common.custommetrics;
 
 /*-
  * #%L
@@ -24,12 +24,16 @@ package com.github.vatbub.javametricscatcher.common;
 import com.codahale.metrics.ExponentiallyDecayingReservoir;
 import com.codahale.metrics.Histogram;
 import com.codahale.metrics.Reservoir;
+import com.github.vatbub.javametricscatcher.common.MetricHistory;
+import com.github.vatbub.javametricscatcher.common.SerializableMetric;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-public class CustomHistogram extends Histogram implements MetricHistory<Long>{
-    private List<Long> updateHistory;
+public class CustomHistogram extends Histogram implements MetricHistory<Long>, SerializableMetric<LinkedList<Long>> {
+    public static final String HISTOGRAM_RESERVOIR_TYPE_PARAM_KEY = "reservoirType";
+    private LinkedList<Long> updateHistory;
     private Reservoir reservoir;
 
     public CustomHistogram() {
@@ -57,11 +61,24 @@ public class CustomHistogram extends Histogram implements MetricHistory<Long>{
         return updateHistory;
     }
 
-    public Reservoir getNewInstanceOfSameReservoirType() throws IllegalAccessException, InstantiationException {
-        return getReservoir().getClass().newInstance();
-    }
-
     public Reservoir getReservoir() {
         return reservoir;
+    }
+
+    @Override
+    public LinkedList<Long> getSerializableData() {
+        return updateHistory;
+    }
+
+    @Override
+    public MetricType getMetricType() {
+        return MetricType.HISTOGRAM;
+    }
+
+    @Override
+    public HashMap<String, String> getAdditionalMetadata() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put(HISTOGRAM_RESERVOIR_TYPE_PARAM_KEY, getReservoir().getClass().getName());
+        return params;
     }
 }
