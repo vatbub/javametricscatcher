@@ -24,10 +24,12 @@ package com.github.vatbub.javametricscatcher.server;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import com.github.vatbub.javametricscatcher.common.ExceptionMessage;
 import com.github.vatbub.javametricscatcher.common.KryoCommon;
 import com.github.vatbub.javametricscatcher.common.MetricsUpdateRequest;
 import com.github.vatbub.javametricscatcher.common.MetricsUpdateResponse;
 import com.github.vatbub.javametricscatcher.common.custommetrics.IntegerGauge;
+import com.github.vatbub.javametricscatcher.common.custommetrics.LongGauge;
 import org.junit.*;
 
 import java.io.IOException;
@@ -54,6 +56,7 @@ public class ServerTest {
 
     @Before
     public void connectClient() throws IOException {
+        server.reset();
         kryoClient = new Client();
         kryoClient.start();
         KryoCommon.registerClasses(kryoClient.getKryo());
@@ -78,15 +81,51 @@ public class ServerTest {
 
     @Test
     public void sendIntegerGaugeTest() throws InterruptedException {
+        int gaugeValue = 100;
+        String metricName = "testMetric";
+        addGaugeResponseListener(metricName);
+
+        IntegerGauge gauge = new IntegerGauge();
+        gauge.setValue(gaugeValue);
+        kryoClient.sendTCP(new MetricsUpdateRequest(metricName, gauge.getMetricType(), gauge.getSerializableData(), gauge.getAdditionalMetadata()));
+    }
+
+    @Test
+    public void sendLongGaugeTest() throws InterruptedException {
+        long gaugeValue = 100;
+        String metricName = "testMetric";
+        addGaugeResponseListener(metricName);
+
+        LongGauge gauge = new LongGauge();
+        gauge.setValue(gaugeValue);
+        kryoClient.sendTCP(new MetricsUpdateRequest(metricName, gauge.getMetricType(), gauge.getSerializableData(), gauge.getAdditionalMetadata()));
+    }
+
+    @Test
+    public void sendIllegalObjectTest(){
+        kryoClient.addListener(new Listener(){
+            @Override
+            public void received(Connection connection, Object object) {
+                executeReceivedHandler(() -> {
+                    Assert.assertTrue(object instanceof ExceptionMessage);
+                    System.out.println("Received exception from server:\n" + object.toString());
+                });
+            }
+        });
+        kryoClient.sendTCP("Hello");
+    }
+
+    private void addGaugeResponseListener(String metricName){
         kryoClient.addListener(new Listener() {
             @Override
             public void received(Connection connection, Object object) {
-                executeReceivedHandler(() -> Assert.assertTrue(object instanceof MetricsUpdateResponse));
+                executeReceivedHandler(() -> {
+                    Assert.assertTrue(object instanceof MetricsUpdateResponse);
+                    Assert.assertEquals(1,server.getRegistry().getHistograms().size());
+                    Assert.assertTrue(server.getRegistry().getHistograms().containsKey(metricName));
+                });
             }
         });
-        IntegerGauge gauge = new IntegerGauge();
-        gauge.setValue(100);
-        kryoClient.sendTCP(new MetricsUpdateRequest("testMetric", gauge.getMetricType(), gauge.getSerializableData(), gauge.getAdditionalMetadata()));
     }
 
     public void executeReceivedHandler(Runnable handler){

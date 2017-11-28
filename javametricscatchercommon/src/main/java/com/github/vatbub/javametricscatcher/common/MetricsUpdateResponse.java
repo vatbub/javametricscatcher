@@ -1,4 +1,6 @@
 package com.github.vatbub.javametricscatcher.common;
 
-public class MetricsUpdateResponse {
+import java.io.Serializable;
+
+public class MetricsUpdateResponse implements Serializable{
 }

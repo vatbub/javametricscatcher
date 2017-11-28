@@ -23,8 +23,6 @@ package com.github.vatbub.javametricscatcher.common;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.serializers.JavaSerializer;
-import com.github.vatbub.javametricscatcher.common.custommetrics.CustomHistogram;
-import com.github.vatbub.javametricscatcher.common.custommetrics.CustomTimer;
 
 public abstract class KryoCommon {
     private KryoCommon(){
@@ -33,11 +31,10 @@ public abstract class KryoCommon {
     }
 
     public static void registerClasses(Kryo kryo){
-        kryo.register(CustomHistogram.class, new JavaSerializer());
-        kryo.register(CustomTimer.class, new JavaSerializer());
         kryo.register(ExceptionMessage.class, new JavaSerializer());
         kryo.register(MetricHistory.class, new JavaSerializer());
         kryo.register(MetricsUpdateRequest.class, new JavaSerializer());
+        kryo.register(MetricsUpdateResponse.class, new JavaSerializer());
 
         kryo.register(Integer.class, new JavaSerializer());
         kryo.register(Long.class, new JavaSerializer());

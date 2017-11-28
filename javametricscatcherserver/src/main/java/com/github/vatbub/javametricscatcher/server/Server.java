@@ -32,7 +32,6 @@ import com.github.vatbub.javametricscatcher.common.custommetrics.CustomTimer;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
@@ -44,8 +43,7 @@ public class Server {
     private PreviousValueMap previousValueMap;
 
     public Server(int tcpPort, int udpPort) throws IOException {
-        registry = new MetricRegistry();
-        previousValueMap = new PreviousValueMap();
+        reset();
         server = new com.esotericsoftware.kryonet.Server();
         server.start();
         KryoCommon.registerClasses(server.getKryo());
@@ -156,14 +154,13 @@ public class Server {
         });
     }
 
-    public void stop() {
-        server.stop();
+    public void reset(){
+        registry = new MetricRegistry();
+        previousValueMap = new PreviousValueMap();
     }
 
-    private Class getType(Object object) {
-        ParameterizedType parameterizedType = (ParameterizedType) object.getClass()
-                .getGenericSuperclass();
-        return (Class) parameterizedType.getActualTypeArguments()[0];
+    public void stop() {
+        server.stop();
     }
 
     public MetricRegistry getRegistry() {

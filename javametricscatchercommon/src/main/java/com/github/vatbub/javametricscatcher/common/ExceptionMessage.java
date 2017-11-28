@@ -21,7 +21,9 @@ package com.github.vatbub.javametricscatcher.common;
  */
 
 
-public class ExceptionMessage {
+import java.io.Serializable;
+
+public class ExceptionMessage implements Serializable{
     private String exceptionName;
     private String message;
     private ExceptionMessage cause;
