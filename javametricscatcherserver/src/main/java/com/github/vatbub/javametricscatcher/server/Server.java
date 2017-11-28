@@ -45,6 +45,7 @@ public class Server {
         previousValueMap = new PreviousValueMap();
         server = new com.esotericsoftware.kryonet.Server();
         server.start();
+        KryoCommon.registerClasses(server.getKryo());
         server.bind(tcpPort, udpPort);
 
         server.addListener(new Listener() {
@@ -153,6 +154,10 @@ public class Server {
                 }
             }
         });
+    }
+
+    public void stop(){
+        server.stop();
     }
 
     private Class getType(Object object) {

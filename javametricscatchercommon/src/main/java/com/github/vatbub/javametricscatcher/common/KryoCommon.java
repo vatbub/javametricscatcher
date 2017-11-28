@@ -21,6 +21,7 @@ package com.github.vatbub.javametricscatcher.common;
  */
 
 
+import com.codahale.metrics.Gauge;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.serializers.JavaSerializer;
 
@@ -36,5 +37,7 @@ public abstract class KryoCommon {
         kryo.register(ExceptionMessage.class, new JavaSerializer());
         kryo.register(MetricHistory.class, new JavaSerializer());
         kryo.register(MetricsUpdateRequest.class, new JavaSerializer());
+
+        kryo.register(Gauge.class, new JavaSerializer());
     }
 }

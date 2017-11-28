@@ -90,7 +90,7 @@ public class ExceptionMessage {
         }
 
         if (getCause()!=null){
-            res = res + "\nCause:\n"  + getCause().toString(prefix + "\t");
+            res = res + "\n" + prefix + "Cause:\n"  + getCause().toString(prefix + "\t");
         }
 
         return res;
