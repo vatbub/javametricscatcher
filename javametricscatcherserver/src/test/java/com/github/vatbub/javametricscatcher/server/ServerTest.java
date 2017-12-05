@@ -48,17 +48,21 @@ public class ServerTest {
 
     @BeforeClass
     public static void startServer() throws IOException {
+        System.out.println("Starting the server...");
         server = new Server(tcpPort, udpPort);
     }
 
     @AfterClass
     public static void stopServer() {
+        System.out.println("Stopping the server...");
         server.stop();
     }
 
     @Before
     public void connectClient() throws IOException {
+        System.out.println("Resetting the server...");
         server.reset();
+        System.out.println("Connecting a new client...");
         kryoClient = new Client();
         kryoClient.start();
         KryoCommon.registerClasses(kryoClient.getKryo());
@@ -69,11 +73,14 @@ public class ServerTest {
 
     @After
     public void disconnectClient() throws Throwable {
+        System.out.println("Disconnecting the client...");
         while (!receivedResponse) {
             Thread.sleep(50);
         }
 
         kryoClient.stop();
+
+        System.out.println("Rethrowing exceptions...");
         if (thrownExceptions.size() > 0) {
             throw thrownExceptions.get(0);
         }
