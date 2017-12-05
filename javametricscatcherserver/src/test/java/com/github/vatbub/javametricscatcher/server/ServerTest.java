@@ -1,7 +1,7 @@
 package com.github.vatbub.javametricscatcher.server;
 
-/*-
- * #%L
+        /*-
+         * #%L
  * javametricscatcher.server
  * %%
  * Copyright (C) 2017 Frederik Kammel
@@ -18,7 +18,7 @@ package com.github.vatbub.javametricscatcher.server;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * #L%
- */
+         */
 
 
 import com.esotericsoftware.kryonet.Client;
