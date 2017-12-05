@@ -22,12 +22,9 @@ package com.github.vatbub.javametricscatcher.server.reporters;
 
 
 import com.codahale.metrics.MetricRegistry;
-
-import java.util.List;
-import java.util.Map;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 public interface ReporterConfigurator<T> {
-    T configure(MetricRegistry registry, Map<String, Object> yamlConfig);
-
-    List<String> getAliases();
+    T configure(MetricRegistry registry, Element xmlConfig, Namespace configNamespace);
 }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metricsConfig xmlns="https://raw.githubusercontent.com/vatbub/javametricscatcher/master/ConfigSchema.xsd">
+    <reporter configuratorClass="com.github.vatbub.javametricscatcher.server.reporters.ConsoleConfigurator">
+        <convertDurationsTo>DAYS</convertDurationsTo>
+    </reporter>
+</metricsConfig>
