@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="https://www.w3schools.com"
+           xmlns="https://www.w3schools.com"
+           elementFormDefault="qualified">
+    <xs:element name="Reporter">
+        <xs:complexType>
+            <xs:attribute name="class" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
