@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           targetNamespace="https://github.com/vatbub/javametricscatcher/"
-           xmlns="https://github.com/vatbub/javametricscatcher/"
+           targetNamespace="https://raw.githubusercontent.com/vatbub/javametricscatcher/master/ConfigSchema.xsd"
+           xmlns="https://raw.githubusercontent.com/vatbub/javametricscatcher/master/ConfigSchema.xsd"
            elementFormDefault="qualified">
     <xs:element name="metricsConfig">
         <xs:complexType>
