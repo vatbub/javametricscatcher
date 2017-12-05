@@ -77,7 +77,7 @@ public class ServerTest {
         while (!receivedResponse) {
             Thread.sleep(50);
         }
-
+        System.out.println("Donw waiting...");
         kryoClient.stop();
 
         System.out.println("Rethrowing exceptions...");
@@ -88,7 +88,7 @@ public class ServerTest {
     }
 
     @Test
-    public void sendIntegerGaugeTest() throws InterruptedException {
+    public void sendIntegerGaugeTest() {
         int gaugeValue = 100;
         String metricName = "testMetric.integerGauge";
         addGaugeAndHistogramResponseListener(metricName);
@@ -99,7 +99,7 @@ public class ServerTest {
     }
 
     @Test
-    public void sendLongGaugeTest() throws InterruptedException {
+    public void sendLongGaugeTest() {
         long gaugeValue = 100;
         String metricName = "testMetric.longGauge";
         addGaugeAndHistogramResponseListener(metricName);
@@ -110,7 +110,7 @@ public class ServerTest {
     }
 
     @Test
-    public void sendTimerTest() throws InterruptedException {
+    public void sendTimerTest() {
         String metricName = "testMetric.timer";
         kryoClient.addListener(new Listener() {
             @Override
@@ -130,7 +130,7 @@ public class ServerTest {
     }
 
     @Test
-    public void sendHistogramTest() throws InterruptedException {
+    public void sendHistogramTest() {
         String metricName = "testMetric.histogram";
         addGaugeAndHistogramResponseListener(metricName);
 
