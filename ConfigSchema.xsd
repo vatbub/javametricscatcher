@@ -8,7 +8,10 @@
             <xs:sequence>
                 <xs:element name="reporter">
                     <xs:complexType>
-                        <xs:attribute name="class" type="xs:string"/>
+                        <xs:sequence>
+                            <xs:any/>
+                        </xs:sequence>
+                        <xs:attribute name="configuratorClass" type="xs:string"/>
                     </xs:complexType>
                 </xs:element>
             </xs:sequence>
