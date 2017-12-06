@@ -40,8 +40,8 @@ import java.util.concurrent.TimeUnit;
 
 public class ServerTest {
     private static Server server;
-    private static final int tcpPort = 1020;
-    private static final int udpPort = 1021;
+    private static final int tcpPort = 49152;
+    private static final int udpPort = 49153;
     private Client kryoClient;
     private boolean receivedResponse;
     private List<Throwable> thrownExceptions;
