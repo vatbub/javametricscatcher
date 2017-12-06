@@ -17,6 +17,10 @@ script:
 #before_cache:
 #- mvn dependency:copy -Dartifact=com.github.vatbub:awsEc2InstanceRebooter:1.0:jar:jar-with-dependencies
 #- java -jar target/dependency/awsEc2InstanceRebooter-1.0-jar-with-dependencies.jar -c reboot -r EU_CENTRAL_1 -k $awsKey -s $awsSecret -i $awsInstanceId
+after_failure:
+  - cat javametricscatchercommon/target/surefire-reports/*.txt
+  - cat javametricscatcherclient/target/surefire-reports/*.txt
+  - cat javametricscatcherserver/target/surefire-reports/*.txt
 after_success:
 - git checkout master
 - "\\curl -sSL https://get.rvm.io | bash -s stable --ruby"
