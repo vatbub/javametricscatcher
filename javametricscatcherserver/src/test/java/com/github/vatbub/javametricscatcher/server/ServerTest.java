@@ -77,7 +77,7 @@ public class ServerTest {
         while (!receivedResponse) {
             Thread.sleep(50);
         }
-        System.out.println("Donw waiting...");
+        System.out.println("Done waiting...");
         kryoClient.stop();
 
         System.out.println("Rethrowing exceptions...");
@@ -159,11 +159,13 @@ public class ServerTest {
                         Assert.assertTrue(server.getRegistry().getCounters().containsKey(metricName));
                         Assert.assertEquals(counter.getCount(), server.getRegistry().getCounters().get(metricName).getCount());
                         waitForNextResponse[0] = false;
+                        System.out.println(counter.getCount());
+                        System.out.println(targetValue);
                     } catch (Throwable t) {
                         waitForNextResponse[0] = false;
                         throw t;
                     }
-                }, counter.getCount() == targetValue);
+                }, counter.getCount() >= targetValue);
             }
         });
 
