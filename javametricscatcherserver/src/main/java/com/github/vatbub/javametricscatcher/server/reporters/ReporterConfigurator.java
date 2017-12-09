@@ -26,5 +26,6 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 
 public interface ReporterConfigurator<T> {
+    @SuppressWarnings("UnusedReturnValue")
     T configure(MetricRegistry registry, Element xmlConfig, Namespace configNamespace);
 }

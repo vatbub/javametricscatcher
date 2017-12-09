@@ -37,9 +37,9 @@ import java.util.concurrent.TimeUnit;
 
 public class CustomTimer extends Timer implements MetricHistory<CustomTimer.TimerEntry>, SerializableMetric<LinkedList<CustomTimer.TimerEntry>> {
     public static final String TIMER_RESERVOIR_TYPE_PARAM_KEY = "reservoirType";
-    private LinkedList<TimerEntry> updateHistory;
-    private Clock clock;
-    private Reservoir reservoir;
+    private final LinkedList<TimerEntry> updateHistory;
+    private final Clock clock;
+    private final Reservoir reservoir;
 
     public CustomTimer() {
         this(new ExponentiallyDecayingReservoir());

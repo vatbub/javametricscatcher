@@ -90,7 +90,7 @@ public class ServerReporter extends ScheduledReporter {
             return withHost(InetAddress.getByName(host));
         }
 
-        public Builder withHost(InetAddress host) throws UnknownHostException {
+        public Builder withHost(InetAddress host) {
             this.host = host;
             return this;
         }
@@ -204,12 +204,12 @@ public class ServerReporter extends ScheduledReporter {
                            InetAddress host,
                            int tcpPort,
                            int udpPort,
-                           boolean useUDP) throws IOException {
+                           boolean useUDP) {
         super(registry, "console-reporter", filter, rateUnit, durationUnit, executor, shutdownExecutorOnStop, null);
         client = new KryoClient(timeout, host, tcpPort, udpPort, useUDP);
     }
 
-    private KryoClient client;
+    private final KryoClient client;
 
     @Override
     public void report(SortedMap<String, Gauge> gauges,
@@ -253,14 +253,14 @@ public class ServerReporter extends ScheduledReporter {
     }
 
     private class KryoClient {
-        private Client client;
+        private final Client client;
         private boolean useUDP;
         private int timeout;
         private InetAddress host;
         private int tcpPort;
         private int udpPort;
 
-        private KryoClient(int timeout, InetAddress host, int tcpPort, int udpPort, boolean useUDP) throws IOException {
+        private KryoClient(int timeout, InetAddress host, int tcpPort, int udpPort, boolean useUDP) {
             this.client = new Client();
             setUseUDP(useUDP);
             setTimeout(timeout);

@@ -33,8 +33,8 @@ import java.util.List;
 
 public class CustomHistogram extends Histogram implements MetricHistory<Long>, SerializableMetric<LinkedList<Long>> {
     public static final String HISTOGRAM_RESERVOIR_TYPE_PARAM_KEY = "reservoirType";
-    private LinkedList<Long> updateHistory;
-    private Reservoir reservoir;
+    private final LinkedList<Long> updateHistory;
+    private final Reservoir reservoir;
 
     public CustomHistogram() {
         this(new ExponentiallyDecayingReservoir());
