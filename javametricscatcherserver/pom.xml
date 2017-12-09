@@ -12,7 +12,7 @@
     <artifactId>javametricscatcher.server</artifactId>
 
     <properties>
-        <mainClass>view.EntryClass</mainClass>
+        <mainClass>com.github.vatbub.javametricscatcher.server.Main</mainClass>
     </properties>
 
     <dependencies>

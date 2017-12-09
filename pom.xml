@@ -84,6 +84,7 @@
         <module>javametricscatcherclient</module>
         <module>javametricscatcherserver</module>
         <module>javametricscatchercommon</module>
+        <module>javametricscatchersampleapp</module>
     </modules>
 
     <properties>
