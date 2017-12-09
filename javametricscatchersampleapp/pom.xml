@@ -11,5 +11,34 @@
 
     <artifactId>javametricscatcher.sampleapp</artifactId>
 
+    <properties>
+        <mainClass>com.github.vatbub.javametricscatcher.sampleapp.Main</mainClass>
+    </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.github.vatbub</groupId>
+            <artifactId>javametricscatcher.client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Create the jar-with-dependencies -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>buildMainExecutableJar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

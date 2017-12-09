@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.vatbub.javametricscatcher.sampleapp.metricviews.CustomCounter">
+   <children>
+      <Label text="Current Value:" />
+      <Label fx:id="valueLabel" text="Label" />
+      <Button fx:id="incByOneButton" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#incByOneButtonOnAction" text="Increment by one" />
+      <Button fx:id="incByButton" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#incByButtonOnAction" text="Increment">
+         <graphic>
+            <TextField fx:id="incByTextField" promptText="Increment by" />
+         </graphic>
+      </Button>
+      <Button fx:id="decByOneButton" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#decByOneButtonOnAction" text="Decrement by one" />
+      <Button fx:id="decByButton" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#decByButton" text="Decrement">
+         <graphic>
+            <TextField fx:id="decByTextField" promptText="Decrement by" />
+         </graphic>
+      </Button>
+   </children>
+</HBox>
