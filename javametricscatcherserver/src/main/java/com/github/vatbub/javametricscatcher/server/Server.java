@@ -34,7 +34,6 @@ import org.apache.commons.collections.CollectionUtils;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.logging.Level;
 
 public class Server {
@@ -73,11 +72,12 @@ public class Server {
                 PreviousValueMap.ValueCollection valueCollection = previousValueMap.remove(connection);
 
                 // remove counts from that connection
-                if (!valueCollection.getCounterMap().isEmpty()) {
+                /*if (!valueCollection.getCounterMap().isEmpty()) {
                     for (Map.Entry<String, Counter> entry : valueCollection.getCounterMap().entrySet()) {
                         getRegistry().counter(entry.getKey()).dec(entry.getValue().getCount());
                     }
-                }
+                }*/
+                // TODO: Remove gauges from that connection, counts shall stay (e. g. download counts)
             }
 
             @SuppressWarnings("unchecked")
