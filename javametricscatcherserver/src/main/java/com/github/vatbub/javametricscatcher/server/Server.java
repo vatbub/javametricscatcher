@@ -1,24 +1,24 @@
 package com.github.vatbub.javametricscatcher.server;
 
-/*-
- * #%L
- * javametricscatcher.server
- * %%
- * Copyright (C) 2017 Frederik Kammel
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
+        /*-
+         * #%L
+         * javametricscatcher.server
+         * %%
+         * Copyright (C) 2017 Frederik Kammel
+         * %%
+         * Licensed under the Apache License, Version 2.0 (the "License");
+         * you may not use this file except in compliance with the License.
+         * You may obtain a copy of the License at
+         *
+         *      http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         * #L%
+         */
 
 
 import com.codahale.metrics.*;
@@ -42,12 +42,24 @@ public class Server {
     private MetricRegistry registry;
     private PreviousValueMap previousValueMap;
 
+
+    /**
+     * Launches a new server instance.
+     * @param tcpPort The tcp port to bind to.
+     * @param udpPort The udp port to bind to. Set it to a negative number to disable udp.
+     * @throws IOException If the server cannot bind to the specified ports
+     */
     public Server(int tcpPort, int udpPort) throws IOException {
         reset();
         server = new com.esotericsoftware.kryonet.Server();
         server.start();
         KryoCommon.registerClasses(server.getKryo());
-        server.bind(tcpPort, udpPort);
+        if (udpPort <= 0) {
+            // illegal udp port, ignore it
+            server.bind(tcpPort);
+        } else {
+            server.bind(tcpPort, udpPort);
+        }
 
         server.addListener(new Listener() {
             @Override
@@ -152,7 +164,7 @@ public class Server {
         });
     }
 
-    public void reset(){
+    public void reset() {
         registry = new MetricRegistry();
         previousValueMap = new PreviousValueMap();
     }
