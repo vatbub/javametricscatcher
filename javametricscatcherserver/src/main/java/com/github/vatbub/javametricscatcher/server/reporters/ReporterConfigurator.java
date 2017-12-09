@@ -22,10 +22,10 @@ package com.github.vatbub.javametricscatcher.server.reporters;
 
 
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Reporter;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
-public interface ReporterConfigurator<T> {
-    @SuppressWarnings("UnusedReturnValue")
+public interface ReporterConfigurator<T extends Reporter> {
     T configure(MetricRegistry registry, Element xmlConfig, Namespace configNamespace);
 }

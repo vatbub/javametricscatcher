@@ -22,6 +22,7 @@ package com.github.vatbub.javametricscatcher.server.reporters;
 
 
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Reporter;
 import com.github.vatbub.common.core.logging.FOKLogger;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -31,9 +32,12 @@ import org.jdom2.input.SAXBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConfigurationManager {
     private static final ConfigurationManager ourInstance = new ConfigurationManager();
+    private List<Reporter> reporters = new ArrayList<>();
 
     public static ConfigurationManager getInstance() {
         return ourInstance;
@@ -42,6 +46,7 @@ public class ConfigurationManager {
     private ConfigurationManager() {
     }
 
+    @SuppressWarnings("unchecked")
     public void readConfiguration(File configFile, MetricRegistry registry) throws IOException, JDOMException, ClassNotFoundException, IllegalAccessException, InstantiationException {
         Document document = new SAXBuilder().build(configFile);
 
@@ -54,7 +59,7 @@ public class ConfigurationManager {
             String configuratorName = reporter.getAttribute("configuratorClass").getValue();
             FOKLogger.info(ConfigurationManager.class.getName(), "Configuring " + configuratorName + "...");
             Class<?> reporterConfiguratorClass = Class.forName(configuratorName);
-            ((ReporterConfigurator) reporterConfiguratorClass.newInstance()).configure(registry, reporter, configNameSpace);
+            reporters.add(((ReporterConfigurator<Reporter>) reporterConfiguratorClass.newInstance()).configure(registry, reporter, configNameSpace));
         }
     }
 
@@ -63,5 +68,9 @@ public class ConfigurationManager {
         if (tag!=null){
             runnableToSetConfig.run(tag.getValue());
         }
+    }
+
+    public List<Reporter> getReporters() {
+        return reporters;
     }
 }
