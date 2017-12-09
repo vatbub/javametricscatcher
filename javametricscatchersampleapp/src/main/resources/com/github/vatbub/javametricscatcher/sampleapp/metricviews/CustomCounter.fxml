@@ -4,7 +4,6 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
 <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.vatbub.javametricscatcher.sampleapp.metricviews.CustomCounter">
    <children>
       <Label text="Current Value:" />
