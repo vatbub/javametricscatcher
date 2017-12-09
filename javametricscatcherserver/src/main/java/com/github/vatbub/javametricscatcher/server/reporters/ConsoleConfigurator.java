@@ -37,6 +37,8 @@ public class ConsoleConfigurator implements ReporterConfigurator<ConsoleReporter
         ConfigurationManager.getInstance().getTagAndSetConfig(xmlConfig, configNamespace, "convertRatesTo", (value) -> builder.convertRatesTo(TimeUnit.valueOf(value)));
         ConfigurationManager.getInstance().getTagAndSetConfig(xmlConfig, configNamespace, "shutdownExecutorOnStop", (value) -> builder.shutdownExecutorOnStop(Boolean.parseBoolean(value)));
 
-        return builder.build();
+        ConsoleReporter res = builder.build();
+        res.start(1, TimeUnit.SECONDS);
+        return res;
     }
 }

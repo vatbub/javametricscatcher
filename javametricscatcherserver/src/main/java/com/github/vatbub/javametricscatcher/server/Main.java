@@ -112,21 +112,21 @@ public class Main {
 
     public static Option getUDPPortOption() {
         if (udpPortOption == null) {
-            udpPortOption = new Option("udp", "udpPort", false, "Specifies the udp port to use");
+            udpPortOption = new Option("udp", "udpPort", true, "Specifies the udp port to use");
         }
         return udpPortOption;
     }
 
     public static Option getTCPPortOption() {
         if (tcpPortOption == null) {
-            tcpPortOption = new Option("tcp", "tcpPort", false, "Specifies the tcp port to use");
+            tcpPortOption = new Option("tcp", "tcpPort", true, "Specifies the tcp port to use");
         }
         return tcpPortOption;
     }
 
     public static Option getConfigFileOption() {
         if (configFileOption == null) {
-            configFileOption = new Option("config", "configFile", false, "Specifies the location of the configuration file");
+            configFileOption = new Option("config", "configFile", true, "Specifies the location of the configuration file");
         }
         return configFileOption;
     }
