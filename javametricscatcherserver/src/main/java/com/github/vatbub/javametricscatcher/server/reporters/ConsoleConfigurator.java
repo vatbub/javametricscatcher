@@ -35,11 +35,11 @@ public class ConsoleConfigurator implements ReporterConfigurator<ConsoleReporter
     public ConsoleReporter configure(MetricRegistry registry, Element xmlConfig, Namespace configNamespace) {
         ConsoleReporter.Builder builder = ConsoleReporter.forRegistry(registry);
 
-        ConfigurationManager.getInstance().getTagAndSetConfig(xmlConfig, configNamespace, "convertDurationsTo", (value) -> builder.convertDurationsTo(TimeUnit.valueOf(value)));
-        ConfigurationManager.getInstance().getTagAndSetConfig(xmlConfig, configNamespace, "convertRatesTo", (value) -> builder.convertRatesTo(TimeUnit.valueOf(value)));
-        ConfigurationManager.getInstance().getTagAndSetConfig(xmlConfig, configNamespace, "shutdownExecutorOnStop", (value) -> builder.shutdownExecutorOnStop(Boolean.parseBoolean(value)));
-        ConfigurationManager.getInstance().getTagAndSetConfig(xmlConfig, configNamespace, "formattedForLocale", (value) -> builder.formattedFor(Locale.forLanguageTag(value)));
-        ConfigurationManager.getInstance().getTagAndSetConfig(xmlConfig, configNamespace, "formattedForTimezone", (value) -> builder.formattedFor(TimeZone.getTimeZone(value)));
+        ConfigurationManager.getInstance().getTagAndSetConfig(xmlConfig, configNamespace, "convertDurationsTo", value -> builder.convertDurationsTo(TimeUnit.valueOf(value)));
+        ConfigurationManager.getInstance().getTagAndSetConfig(xmlConfig, configNamespace, "convertRatesTo", value -> builder.convertRatesTo(TimeUnit.valueOf(value)));
+        ConfigurationManager.getInstance().getTagAndSetConfig(xmlConfig, configNamespace, "shutdownExecutorOnStop", value -> builder.shutdownExecutorOnStop(Boolean.parseBoolean(value)));
+        ConfigurationManager.getInstance().getTagAndSetConfig(xmlConfig, configNamespace, "formattedForLocale", value -> builder.formattedFor(Locale.forLanguageTag(value)));
+        ConfigurationManager.getInstance().getTagAndSetConfig(xmlConfig, configNamespace, "formattedForTimezone", value -> builder.formattedFor(TimeZone.getTimeZone(value)));
 
         Element disabledMetricAttributesElement = xmlConfig.getChild("disabledMetricAttributes", configNamespace);
         if (disabledMetricAttributesElement != null) {

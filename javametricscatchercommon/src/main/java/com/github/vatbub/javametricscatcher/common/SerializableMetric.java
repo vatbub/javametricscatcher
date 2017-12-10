@@ -24,12 +24,12 @@ package com.github.vatbub.javametricscatcher.common;
 import com.github.vatbub.javametricscatcher.common.custommetrics.MetricType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.Map;
 
 public interface SerializableMetric<T extends Serializable> {
     T getSerializableData();
 
     MetricType getMetricType();
 
-    HashMap<String, String> getAdditionalMetadata();
+    Map<String, String> getAdditionalMetadata();
 }

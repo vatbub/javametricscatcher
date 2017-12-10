@@ -30,6 +30,7 @@ import com.github.vatbub.javametricscatcher.common.SerializableMetric;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class CustomHistogram extends Histogram implements MetricHistory<Long>, SerializableMetric<LinkedList<Long>> {
     public static final String HISTOGRAM_RESERVOIR_TYPE_PARAM_KEY = "reservoirType";
@@ -67,7 +68,7 @@ public class CustomHistogram extends Histogram implements MetricHistory<Long>, S
 
     @Override
     public LinkedList<Long> getSerializableData() {
-        return updateHistory;
+        return (LinkedList<Long>) getUpdateHistory();
     }
 
     @Override
@@ -76,7 +77,7 @@ public class CustomHistogram extends Histogram implements MetricHistory<Long>, S
     }
 
     @Override
-    public HashMap<String, String> getAdditionalMetadata() {
+    public Map<String, String> getAdditionalMetadata() {
         HashMap<String, String> params = new HashMap<>();
         params.put(HISTOGRAM_RESERVOIR_TYPE_PARAM_KEY, getReservoir().getClass().getName());
         return params;

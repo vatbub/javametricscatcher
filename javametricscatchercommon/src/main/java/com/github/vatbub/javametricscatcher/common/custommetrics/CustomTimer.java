@@ -32,6 +32,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -101,7 +102,7 @@ public class CustomTimer extends Timer implements MetricHistory<CustomTimer.Time
 
     @Override
     public LinkedList<TimerEntry> getSerializableData() {
-        return updateHistory;
+        return (LinkedList<TimerEntry>) getUpdateHistory();
     }
 
     @Override
@@ -157,7 +158,7 @@ public class CustomTimer extends Timer implements MetricHistory<CustomTimer.Time
     }
 
     @Override
-    public HashMap<String, String> getAdditionalMetadata() {
+    public Map<String, String> getAdditionalMetadata() {
         HashMap<String, String> params = new HashMap<>();
         params.put(TIMER_RESERVOIR_TYPE_PARAM_KEY, getReservoir().getClass().getName());
         return params;

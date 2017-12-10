@@ -24,10 +24,10 @@ package com.github.vatbub.javametricscatcher.common.custommetrics;
 import com.codahale.metrics.Gauge;
 import com.github.vatbub.javametricscatcher.common.SerializableMetric;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class LongGauge implements Gauge<Long>, SerializableMetric<Long> {
-    public long value;
+    private long value;
 
     @Override
     public Long getValue() {
@@ -49,7 +49,7 @@ public class LongGauge implements Gauge<Long>, SerializableMetric<Long> {
     }
 
     @Override
-    public HashMap<String, String> getAdditionalMetadata() {
+    public Map<String, String> getAdditionalMetadata() {
         return null;
     }
 }

@@ -24,10 +24,10 @@ package com.github.vatbub.javametricscatcher.common.custommetrics;
 import com.codahale.metrics.Gauge;
 import com.github.vatbub.javametricscatcher.common.SerializableMetric;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class IntegerGauge implements Gauge<Integer>, SerializableMetric<Integer> {
-    public int value;
+    private int value;
 
     @Override
     public Integer getValue() {
@@ -49,7 +49,7 @@ public class IntegerGauge implements Gauge<Integer>, SerializableMetric<Integer>
     }
 
     @Override
-    public HashMap<String, String> getAdditionalMetadata() {
+    public Map<String, String> getAdditionalMetadata() {
         return null;
     }
 }

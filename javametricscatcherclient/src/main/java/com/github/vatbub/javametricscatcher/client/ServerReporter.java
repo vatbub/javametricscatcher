@@ -179,7 +179,7 @@ public class ServerReporter extends ScheduledReporter {
          *
          * @return a {@link ServerReporter}
          */
-        public ServerReporter build() throws IOException {
+        public ServerReporter build() {
             return new ServerReporter(registry,
                     rateUnit,
                     durationUnit,

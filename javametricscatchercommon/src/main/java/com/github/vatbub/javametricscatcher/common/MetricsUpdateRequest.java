@@ -24,19 +24,19 @@ package com.github.vatbub.javametricscatcher.common;
 import com.github.vatbub.javametricscatcher.common.custommetrics.MetricType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.Map;
 
 public class MetricsUpdateRequest implements Serializable{
     private String metricName;
     private MetricType metricType;
     private Serializable metricData;
-    private HashMap<String, String> metricParameters;
+    private Map<String, String> metricParameters;
 
     public MetricsUpdateRequest() {
         this(null, null, null, null);
     }
 
-    public MetricsUpdateRequest(String metricName, MetricType metricType, Serializable metricData, HashMap<String, String> metricParameters) {
+    public MetricsUpdateRequest(String metricName, MetricType metricType, Serializable metricData, Map<String, String> metricParameters) {
         setMetricName(metricName);
         setMetricType(metricType);
         setMetricData(metricData);
@@ -67,11 +67,11 @@ public class MetricsUpdateRequest implements Serializable{
         this.metricData = metricData;
     }
 
-    public HashMap<String, String> getMetricParameters() {
+    public Map<String, String> getMetricParameters() {
         return metricParameters;
     }
 
-    public void setMetricParameters(HashMap<String, String> metricParameters) {
+    public void setMetricParameters(Map<String, String> metricParameters) {
         this.metricParameters = metricParameters;
     }
 }

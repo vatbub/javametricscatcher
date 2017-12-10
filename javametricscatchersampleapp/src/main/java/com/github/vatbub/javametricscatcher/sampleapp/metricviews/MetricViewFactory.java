@@ -27,6 +27,10 @@ import com.github.vatbub.javametricscatcher.sampleapp.Main;
 import java.io.IOException;
 
 public  class MetricViewFactory {
+    private MetricViewFactory(){
+        throw new IllegalStateException("MetricsViewFactory class may not be instantiated");
+    }
+
     public static void show(Main.MetricType metricType, Metric metric) throws IOException {
         switch(metricType){
             case CustomCounter:
