@@ -52,7 +52,7 @@
     <parent>
         <groupId>com.github.vatbub</groupId>
         <artifactId>parentPom</artifactId>
-        <version>0.0.24-SNAPSHOT</version>
+        <version>0.0.25-SNAPSHOT</version>
     </parent>
 
     <scm>
@@ -91,7 +91,7 @@
         <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
         <gitRepoName>javametricscatcher</gitRepoName>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <common.version>0.1.2-SNAPSHOT</common.version>
+        <common.version>0.1.3-SNAPSHOT</common.version>
     </properties>
 
     <dependencies>
