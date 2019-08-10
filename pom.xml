@@ -96,6 +96,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.github.vatbub</groupId>
             <artifactId>common.core</artifactId>
             <version>${common.version}</version>
