@@ -2,7 +2,7 @@
 
 if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_BRANCH" = "master" ]
 then
-  mvn deploy --settings target/travis/settings.xml
+  mvn deploy --settings travisMavenSettings.xml
 
   git checkout master
   \curl -sSL https://get.rvm.io | bash -s stable --ruby
@@ -15,5 +15,5 @@ then
   git config --global user.name $GH_USER_NAME
   git add CHANGELOG.md
   git commit -m "[skip ci] Updated Changelog"
-  git push git@github.com:vatbub/fokLauncher.git master
+  git push git@github.com:vatbub/javametricscatcher.git master
 fi
