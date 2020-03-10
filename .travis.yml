@@ -23,9 +23,6 @@ after_failure:
   - cat javametricscatcherserver/target/surefire-reports/*.txt
 after_success:
 - source ./travisAfterSuccess.sh
-branches:
-  only:
-  - master
 notifications:
   email:
     recipients:
